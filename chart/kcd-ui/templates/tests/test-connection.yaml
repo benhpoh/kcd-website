@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "{{ include "kcd.fullname" . }}-test-connection"
+  name: "{{ include "kcd-uifullname" . }}-test-connection"
   labels:
-    {{- include "kcd.labels" . | nindent 4 }}
+    {{- include "kcd-uilabels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": test
 spec:
@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "kcd.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "kcd-uifullname" . }}:{{ .Values.service.port }}']
   restartPolicy: Never

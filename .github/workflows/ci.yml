@@ -23,16 +23,17 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      # - name: update tag for oc-web image on deployment
-      #   run: |-
-      #     export GITHUB_SHA=${{ github.sha }}
-      #     find "chart" -name "*.tmpl" -exec bash -c 'envsubst < $1 > chart/values.yaml' _ {} \;
-      #     ls chart/
-      #     cat chart/values.yaml
-      #     git status   
-      #     git add chart/values.yaml
-      #     git commit -m "update image tag with $GITHUB_SHA"
-      #     git push
+      - name: update tag for kcd-ui image on deployment
+        run: |-
+          cd chart
+          export GITHUB_SHA=${{ github.sha }}
+          find "kcd-ui" -name "*.tmpl" -exec bash -c 'envsubst < $1 > kcd-ui/values.yaml' _ {} \;
+          ls kcd-ui/
+          cat kcd-ui/values.yaml
+          git status   
+          git add kcd-ui/values.yaml
+          git commit -m "update image tag with $GITHUB_SHA"
+          git push
       
       - name: Install Helm
         uses: azure/setup-helm@v1
