@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ feature/9/add-helm-releaser-action ]
 
   workflow_dispatch:
 
@@ -23,39 +23,16 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      - name: docker login
-        env:
-          DOCKER_USER: ${{secrets.DOCKER_USER}}
-          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-        run: |
-          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-
-      - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag bradmccoydev/kcd-website:${{ github.sha }}
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: 'bradmccoydev/kcd-website:${{ github.sha }}'
-          format: 'table'
-          exit-code: '0'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL'
-
-      - name: Docker Push
-        run: docker push bradmccoydev/kcd-website:${{ github.sha }}
-      
-      - name: update tag for oc-web image on deployment
-        run: |-
-          export GITHUB_SHA=${{ github.sha }}
-          find "chart" -name "*.tmpl" -exec bash -c 'envsubst < $1 > chart/values.yaml' _ {} \;
-          ls chart/
-          cat chart/values.yaml
-          git status   
-          git add chart/values.yaml
-          git commit -m "update image tag with $GITHUB_SHA"
-          git push
+      # - name: update tag for oc-web image on deployment
+      #   run: |-
+      #     export GITHUB_SHA=${{ github.sha }}
+      #     find "chart" -name "*.tmpl" -exec bash -c 'envsubst < $1 > chart/values.yaml' _ {} \;
+      #     ls chart/
+      #     cat chart/values.yaml
+      #     git status   
+      #     git add chart/values.yaml
+      #     git commit -m "update image tag with $GITHUB_SHA"
+      #     git push
       
       - name: Install Helm
         uses: azure/setup-helm@v1
